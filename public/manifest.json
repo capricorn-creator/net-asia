@@ -1,0 +1,15 @@
+{
+  "name": "NetAsia — Internet Intelligence Platform",
+  "short_name": "NetAsia",
+  "description": "Professional network and web tools for developers and sysadmins",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08080F",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "categories": ["utilities", "developer"],
+  "lang": "en"
+}
