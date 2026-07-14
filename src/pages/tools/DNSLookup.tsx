@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
-import { lookupDNS, DNS_RECORD_TYPES } from '../../lib/api';
+import { useDNSLookup } from '../../hooks/useDNSLookup';
+import { DNS_RECORD_TYPES } from '../../services/dns';
 import type { DNSRecord } from '../../types';
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
@@ -20,30 +21,22 @@ const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
 export default function DNSLookupPage() {
   const [domain, setDomain] = useState('');
   const [recordType, setRecordType] = useState('ALL');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<DNSRecord[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { results, loading, error: lookupError, lookup } = useDNSLookup();
 
-  const handleLookup = async () => {
+  const handleLookup = () => {
     if (!domain.trim()) return;
-    setLoading(true);
-    setError(null);
-    setResults(null);
-
-    try {
-      const data = await lookupDNS(domain.trim(), recordType);
-      setResults(data);
-      if (data.length === 0) setError('No DNS records found for this domain and record type.');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'DNS lookup failed');
-    } finally {
-      setLoading(false);
-    }
+    lookup(domain.trim(), recordType);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleLookup();
   };
+
+  // Preserve original UX: a successful-but-empty result set is shown
+  // as a friendly "no records found" message rather than a blank state.
+  const error = lookupError || (results && results.length === 0
+    ? 'No DNS records found for this domain and record type.'
+    : null);
 
   // Group records by type
   const grouped = results?.reduce<Record<string, DNSRecord[]>>((acc, r) => {

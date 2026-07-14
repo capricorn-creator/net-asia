@@ -128,9 +128,61 @@ export const TOOLS: Tool[] = [
     color: 'blue',
   },
 
+  // ── Phase 2B: Live Tools ─────────────────────────────────────
+  {
+    id: 'website-tech',
+    name: 'Website Tech Detector',
+    description: 'Detect CMS, frameworks, analytics, CDN, and hosting technology used by any website',
+    icon: '🔭',
+    category: 'website',
+    path: '/tools/website-tech',
+    isNew: true,
+    color: 'purple',
+  },
+  {
+    id: 'geoip-lookup',
+    name: 'GeoIP Lookup',
+    description: 'Detailed geolocation for any IP address with country flag, city, ASN, ISP, and map links',
+    icon: '🗺️',
+    category: 'network',
+    path: '/tools/geoip-lookup',
+    isNew: true,
+    isPopular: true,
+    color: 'cyan',
+  },
+  {
+    id: 'reverse-dns',
+    name: 'Reverse DNS Lookup',
+    description: 'Find the PTR hostname record for any IPv4 or IPv6 address via reverse DNS lookup',
+    icon: '🔄',
+    category: 'dns',
+    path: '/tools/reverse-dns',
+    isNew: true,
+    color: 'blue',
+  },
+  {
+    id: 'dns-propagation',
+    name: 'DNS Propagation Checker',
+    description: 'Check DNS propagation across 8 global resolvers including Google, Cloudflare, Quad9, and OpenDNS',
+    icon: '📡',
+    category: 'dns',
+    path: '/tools/dns-propagation',
+    isNew: true,
+    color: 'cyan',
+  },
+  {
+    id: 'redirect-checker',
+    name: 'URL Redirect Checker',
+    description: 'Trace every redirect step of a URL — HTTP→HTTPS upgrades, www redirects, and all intermediate hops',
+    icon: '🔀',
+    category: 'website',
+    path: '/tools/redirect-checker',
+    isNew: true,
+    color: 'orange',
+  },
+
   // ── Coming Soon Tools ────────────────────────────────────────
-  { id: 'geoip-lookup', name: 'GeoIP Lookup', description: 'Map-based geolocation for IP addresses with country, city, and ISP detail', icon: '🗺️', category: 'network', path: '/tools/geoip-lookup', comingSoon: true, color: 'cyan' },
-  { id: 'website-tech', name: 'Website Tech Detector', description: 'Detect CMS, frameworks, analytics and hosting technology stacks', icon: '🔭', category: 'website', path: '/tools/website-tech', comingSoon: true, color: 'purple' },
+
   { id: 'password-gen', name: 'Password Generator', description: 'Generate strong, customizable passwords with entropy analysis', icon: '🔑', category: 'security', path: '/tools/password-generator', comingSoon: true, color: 'green' },
   { id: 'hash-gen', name: 'Hash Generator', description: 'Compute MD5, SHA-1, SHA-256, SHA-512 hashes instantly', icon: '#️⃣', category: 'developer', path: '/tools/hash-generator', comingSoon: true, color: 'orange' },
   { id: 'qr-gen', name: 'QR Code Generator', description: 'Generate customizable QR codes for URLs, text and contact info', icon: '▦', category: 'utilities', path: '/tools/qr-generator', comingSoon: true, color: 'cyan' },
@@ -142,7 +194,7 @@ export const TOOLS: Tool[] = [
   { id: 'robots-viewer', name: 'Robots.txt Viewer', description: 'Fetch and analyze any website\'s robots.txt rules', icon: '🤖', category: 'website', path: '/tools/robots-viewer', comingSoon: true, color: 'green' },
   { id: 'sitemap-viewer', name: 'Sitemap Viewer', description: 'Parse and explore XML sitemaps with URL count and structure', icon: '🗂️', category: 'website', path: '/tools/sitemap-viewer', comingSoon: true, color: 'orange' },
   { id: 'http-status', name: 'HTTP Status Explorer', description: 'Reference guide for all HTTP status codes with examples', icon: '📡', category: 'website', path: '/tools/http-status', comingSoon: true, color: 'blue' },
-  { id: 'dns-propagation', name: 'DNS Propagation Checker', description: 'Check DNS propagation across global nameservers in real-time', icon: '📡', category: 'dns', path: '/tools/dns-propagation', comingSoon: true, color: 'cyan' },
+
   { id: 'port-scanner', name: 'Port Scanner', description: 'Check common open ports on any host', icon: '🔓', category: 'network', path: '/tools/port-scanner', comingSoon: true, color: 'purple' },
   { id: 'ping', name: 'Online Ping', description: 'Ping any host from multiple locations simultaneously', icon: '📶', category: 'network', path: '/tools/ping', comingSoon: true, color: 'blue' },
 ];

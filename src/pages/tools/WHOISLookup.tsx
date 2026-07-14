@@ -3,12 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { ResultField, ResultGrid, CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
-import { lookupWHOIS } from '../../lib/api';
-
-interface WHOISResult {
-  raw: string;
-  parsed: Record<string, string>;
-}
+import { useWHOISLookup } from '../../hooks/useWHOISLookup';
 
 function formatDate(dateStr: string | undefined) {
   if (!dateStr) return undefined;
@@ -36,25 +31,12 @@ function getDaysUntilExpiry(expiryStr: string | undefined): { days: number; stat
 
 export default function WHOISLookupPage() {
   const [domain, setDomain] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<WHOISResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { result, loading, error, lookup } = useWHOISLookup();
   const [showRaw, setShowRaw] = useState(false);
 
-  const handleLookup = async () => {
+  const handleLookup = () => {
     if (!domain.trim()) return;
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const data = await lookupWHOIS(domain.trim());
-      setResult(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'WHOIS lookup failed');
-    } finally {
-      setLoading(false);
-    }
+    lookup(domain.trim());
   };
 
   const p = result?.parsed ?? {};

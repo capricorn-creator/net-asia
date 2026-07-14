@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { ResultField, ResultGrid, CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
-import { checkSSL } from '../../lib/api';
-import type { SSLCertificate } from '../../types';
+import { useSSLChecker } from '../../hooks/useSSLChecker';
 
 function formatDate(isoStr: string | undefined) {
   if (!isoStr) return undefined;
@@ -40,24 +39,11 @@ function ExpiryMeter({ days }: { days: number }) {
 
 export default function SSLCheckerPage() {
   const [domain, setDomain] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<SSLCertificate | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { result, loading, error, check } = useSSLChecker();
 
-  const handleCheck = async () => {
+  const handleCheck = () => {
     if (!domain.trim()) return;
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const data = await checkSSL(domain.trim());
-      setResult(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'SSL check failed');
-    } finally {
-      setLoading(false);
-    }
+    check(domain.trim());
   };
 
   const expiryStatus = getExpiryStatus(result?.daysRemaining);

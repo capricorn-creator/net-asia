@@ -30,6 +30,12 @@ const DNSLookupPage   = lazy(() => import('./pages/tools/DNSLookup'));
 const WHOISLookupPage = lazy(() => import('./pages/tools/WHOISLookup'));
 const SSLCheckerPage  = lazy(() => import('./pages/tools/SSLChecker'));
 const HTTPHeadersPage = lazy(() => import('./pages/tools/HTTPHeaders'));
+// Phase 2B tool pages
+const WebTechPage          = lazy(() => import('./pages/tools/WebTech'));
+const GeoIPPage            = lazy(() => import('./pages/tools/GeoIP'));
+const ReverseDNSPage       = lazy(() => import('./pages/tools/ReverseDNS'));
+const DNSPropagationPage   = lazy(() => import('./pages/tools/DNSPropagation'));
+const RedirectCheckerPage  = lazy(() => import('./pages/tools/RedirectChecker'));
 
 function PageLoader() {
   return (
@@ -82,16 +88,21 @@ function AnimatedRoutes() {
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/changelog" element={<ChangelogPage />} />
 
-            {/* Live tools */}
+            {/* Live tools — Phase 1 */}
             <Route path="/tools/ip-lookup"    element={<IPLookupPage />} />
             <Route path="/tools/dns-lookup"   element={<DNSLookupPage />} />
             <Route path="/tools/whois-lookup" element={<WHOISLookupPage />} />
             <Route path="/tools/ssl-checker"  element={<SSLCheckerPage />} />
             <Route path="/tools/http-headers" element={<HTTPHeadersPage />} />
 
+            {/* Live tools — Phase 2B */}
+            <Route path="/tools/website-tech"     element={<WebTechPage />} />
+            <Route path="/tools/geoip-lookup"     element={<GeoIPPage />} />
+            <Route path="/tools/reverse-dns"      element={<ReverseDNSPage />} />
+            <Route path="/tools/dns-propagation"  element={<DNSPropagationPage />} />
+            <Route path="/tools/redirect-checker" element={<RedirectCheckerPage />} />
+
             {/* Coming soon tools */}
-            <Route path="/tools/geoip-lookup"      element={<ComingSoonPage />} />
-            <Route path="/tools/website-tech"       element={<ComingSoonPage />} />
             <Route path="/tools/password-generator" element={<ComingSoonPage />} />
             <Route path="/tools/hash-generator"     element={<ComingSoonPage />} />
             <Route path="/tools/qr-generator"       element={<ComingSoonPage />} />
@@ -103,7 +114,6 @@ function AnimatedRoutes() {
             <Route path="/tools/robots-viewer"      element={<ComingSoonPage />} />
             <Route path="/tools/sitemap-viewer"     element={<ComingSoonPage />} />
             <Route path="/tools/http-status"        element={<ComingSoonPage />} />
-            <Route path="/tools/dns-propagation"    element={<ComingSoonPage />} />
             <Route path="/tools/port-scanner"       element={<ComingSoonPage />} />
             <Route path="/tools/ping"               element={<ComingSoonPage />} />
 

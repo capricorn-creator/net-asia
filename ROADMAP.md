@@ -20,17 +20,46 @@ No new tools — focused on UX, branding, and performance.
 
 ---
 
-## 🔵 Phase 2 — Developer Utilities (Planned · Q3 2025)
+## ✅ Phase 2A — API Architecture Refactor (v2.0.0-arch)
+
+No new tools, no UI changes — internal-only refactor of the networking layer.
+
+**Highlights:** scalable `services/<tool>/{service,parser}.ts` pattern for every tool,
+shared `httpClient` with timeout + normalized `AppError` handling, generic
+`useAsyncLookup` hook with stale-request protection, dedicated hook per tool
+(`useIPLookup`, `useDNSLookup`, `useWHOISLookup`, `useSSLChecker`, `useHeadersLookup`),
+`lib/api.ts` fully decomposed and removed. Lays the foundation so every Phase 2B+
+tool follows the same Tool Page → Hook → Service → Parser flow from day one.
+
+---
+
+## ✅ Phase 2B — Core Internet Tools (v2.1.0)
+
+5 new live tools. All follow the Phase 2A service/parser/hook architecture.
+
+| Tool | Status | API |
+|------|--------|-----|
+| Website Tech Detector | ✅ Live | Wappalyzer free lookup |
+| GeoIP Lookup | ✅ Live | ip-api.com (free) |
+| Reverse DNS Lookup | ✅ Live | Google DoH PTR |
+| DNS Propagation Checker | ✅ Live | 8× parallel DoH resolvers |
+| URL Redirect Checker | ✅ Live | CORS proxy + fetch |
+
+---
+
+## ⬜ Phase 2C — Developer Utilities (Planned)
 
 | Tool | Category | Description |
 |------|----------|-------------|
-| GeoIP Lookup | Network | Map-based IP geolocation with visual map |
 | Password Generator | Security | Strong passwords with entropy meter |
 | Hash Generator | Developer | MD5, SHA-1, SHA-256, SHA-512 |
 | UUID Generator | Developer | v1, v4, v5 UUIDs in bulk |
 | Base64 Encode/Decode | Encoding | Text and file encoding |
 | URL Encode/Decode | Encoding | Percent-encoding for URLs |
 | JSON Formatter | Developer | Beautify, minify, validate, query JSON |
+
+Each tool follows the Phase 2A architecture: `services/<tool>/` with
+`service.ts` + `parser.ts`, a `use<Tool>()` hook, and a page with zero fetch logic.
 
 ---
 
@@ -79,7 +108,9 @@ No new tools — focused on UX, branding, and performance.
 |-------|-------|---------|--------|
 | 1 — Foundation | 5 | 1.0.0 | ✅ Done |
 | 1.5 — Polish | 0 new | 1.5.0 | ✅ Done |
-| 2 — Developer | +7 | 2.0.0 | 🔵 Planned |
+| 2A — Architecture | 0 new | 2.0.0-arch | ✅ Done |
+| 2B — Core Internet | +5 | 2.1.0 | ✅ Done |
+| 2C — Developer Utils | +6 | 2.2.0 | 🔵 Planned |
 | 3 — Web Intelligence | +7 | 3.0.0 | ⬜ Planned |
 | 4 — Advanced | +18 | 4.0.0 | ⬜ Planned |
 | Vision | 100+ | — | 🔮 Future |

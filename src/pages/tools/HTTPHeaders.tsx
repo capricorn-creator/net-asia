@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
-import { checkHTTPHeaders } from '../../lib/api';
-import type { HTTPResponse } from '../../types';
+import { useHeadersLookup } from '../../hooks/useHeadersLookup';
 
 function getStatusColor(status: number) {
   if (status >= 500) return { color: '#F87171', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.2)' };
@@ -21,25 +20,12 @@ const SECURITY_HEADERS = [
 
 export default function HTTPHeadersPage() {
   const [url, setUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<HTTPResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { result, loading, error, check } = useHeadersLookup();
   const [activeTab, setActiveTab] = useState<'all' | 'security'>('all');
 
-  const handleCheck = async () => {
+  const handleCheck = () => {
     if (!url.trim()) return;
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const data = await checkHTTPHeaders(url.trim());
-      setResult(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Request failed');
-    } finally {
-      setLoading(false);
-    }
+    check(url.trim());
   };
 
   const sc = result ? getStatusColor(result.status) : null;

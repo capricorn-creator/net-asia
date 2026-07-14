@@ -3,29 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { ResultField, ResultGrid, CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
-import { lookupIP } from '../../lib/api';
-import type { IPInfo } from '../../types';
+import { useIPLookup } from '../../hooks/useIPLookup';
 
 export default function IPLookupPage() {
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<IPInfo | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { result, loading, error, lookup } = useIPLookup();
 
-  const handleLookup = async (ip?: string) => {
-    const target = ip ?? input.trim();
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const data = await lookupIP(target);
-      setResult(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to lookup IP');
-    } finally {
-      setLoading(false);
-    }
+  const handleLookup = (ip?: string) => {
+    lookup(ip ?? input.trim());
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

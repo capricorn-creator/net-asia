@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { LogoWordmark } from '../ui/Logo';
 
-const VERSION = '1.5.0';
+const VERSION = '2.1.0';
 
 const TOOLS_LINKS = [
   { label: 'IP Lookup', path: '/tools/ip-lookup' },
@@ -89,7 +89,7 @@ export default function Footer() {
             <span className="opacity-40">·</span>
             <span className="mono">v{VERSION}</span>
             <span className="opacity-40">·</span>
-            <span>5 live tools</span>
+            <span>10 live tools</span>
             <span className="opacity-40">·</span>
             <a
               href="https://github.com"

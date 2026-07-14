@@ -104,3 +104,104 @@ export interface ToastMessage {
   message: string;
   duration?: number;
 }
+
+// ── Phase 2B Types ──────────────────────────────────────────────
+
+/** Technology category used by Website Tech Detector */
+export type TechCategory =
+  | 'framework'
+  | 'cms'
+  | 'js-framework'
+  | 'ui-library'
+  | 'analytics'
+  | 'cdn'
+  | 'hosting'
+  | 'server'
+  | 'language'
+  | 'security'
+  | 'ecommerce'
+  | 'database'
+  | 'other';
+
+export interface DetectedTech {
+  name: string;
+  category: TechCategory;
+  /** Confidence 0–100 */
+  confidence: number;
+  version?: string;
+  website?: string;
+  icon?: string;
+}
+
+export interface TechDetectionResult {
+  url: string;
+  technologies: DetectedTech[];
+  /** Total count by category */
+  summary: Record<TechCategory, number>;
+  responseTime: number;
+}
+
+/** Enhanced geolocation result (superset of IPInfo) */
+export interface GeoIPResult {
+  ip: string;
+  type: 'IPv4' | 'IPv6';
+  continent?: string;
+  country?: string;
+  country_name?: string;
+  country_code?: string;
+  /** Two-letter emoji flag derived from country_code */
+  flag?: string;
+  region?: string;
+  city?: string;
+  zip?: string;
+  timezone?: string;
+  latitude?: number;
+  longitude?: number;
+  asn?: string;
+  org?: string;
+  isp?: string;
+  is_mobile?: boolean;
+  is_proxy?: boolean;
+}
+
+/** Single PTR record result for Reverse DNS */
+export interface ReverseDNSResult {
+  ip: string;
+  hostname: string | null;
+  status: 'resolved' | 'no-ptr' | 'error';
+  ttl?: number;
+  responseTime: number;
+}
+
+/** One resolver result row for DNS Propagation Checker */
+export interface PropagationResult {
+  resolver: string;
+  resolverName: string;
+  location: string;
+  values: string[];
+  status: 'success' | 'nxdomain' | 'timeout' | 'error';
+  responseTime: number;
+}
+
+export interface DNSPropagationResult {
+  domain: string;
+  recordType: string;
+  results: PropagationResult[];
+  checkedAt: string;
+}
+
+/** One step in a redirect chain */
+export interface RedirectStep {
+  url: string;
+  status: number;
+  statusText: string;
+}
+
+export interface RedirectResult {
+  originalUrl: string;
+  finalUrl: string;
+  steps: RedirectStep[];
+  redirectCount: number;
+  totalResponseTime: number;
+  isHttpsUpgrade: boolean;
+}
