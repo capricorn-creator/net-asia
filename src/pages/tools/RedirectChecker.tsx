@@ -4,7 +4,29 @@ import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
 import { useRedirectChecker } from '../../hooks/useRedirectChecker';
+import ToolInfo from '../../components/tools/ToolInfo';
 import type { RedirectStep } from '../../types';
+
+const REDIR_SECTIONS = [
+  { heading: "What this tool does", content: "The URL Redirect Checker traces every redirect in a URL's chain, displaying the HTTP status code, status text, and destination URL at each step. It shows the total redirect count, total elapsed time, the final destination URL, and flags HTTP-to-HTTPS upgrades." },
+  { heading: "How it works", content: "Requests are sent through a CORS proxy using HEAD method with manual redirect handling. Each redirect response is captured individually, allowing the full chain to be displayed step by step rather than just returning the final destination." },
+  { heading: "When to use it", content: "Use the Redirect Checker to diagnose redirect loops, confirm that HTTP-to-HTTPS upgrades are in place, verify www-to-non-www or non-www-to-www redirects, debug affiliate or tracking links, confirm canonical URL behaviour, and check that old URLs redirect correctly after a site migration." },
+  { heading: "HTTP status codes in redirects", content: "301 (Moved Permanently) and 308 (Permanent Redirect) tell search engines to transfer link equity to the destination. 302 (Found) and 307 (Temporary Redirect) do not transfer link equity and are used for short-term redirects. Using 301 incorrectly where a temporary redirect is intended can cause SEO issues." },
+];
+
+const REDIR_FAQS = [
+  { q: "What is a redirect loop?", a: "A redirect loop occurs when URL A redirects to URL B and URL B redirects back to URL A (or through a chain that eventually returns to A). Browsers detect this and show an error after a set number of hops. The tool will show the chain until it reaches the maximum hop limit." },
+  { q: "Why is an HTTP-to-HTTPS upgrade important?", a: "Serving pages over HTTP sends data in plain text, making it vulnerable to interception. An HTTP-to-HTTPS redirect ensures all traffic is encrypted. Combined with the HSTS header (visible in the HTTP Headers Checker), this protects users even if they type the http:// version of your URL." },
+  { q: "What is the maximum number of redirects traced?", a: "The tool follows up to 10 redirect hops. This covers the vast majority of legitimate redirect chains. Chains longer than 10 hops typically indicate a misconfiguration." },
+  { q: "Why might results differ from my browser?", a: "Browsers may cache redirects, send cookies that affect redirect behaviour, or follow different redirect rules for non-GET requests. This tool sends a clean HEAD request with no cookies or session data, which shows the default redirect behaviour of the server." },
+];
+
+const REDIR_RELATED = [
+  { name: "HTTP Headers Checker", path: "/tools/http-headers", icon: "\ud83d\udccb", description: "Check HSTS and security header status" },
+  { name: "Website Tech Detector", path: "/tools/website-tech", icon: "\ud83d\udd2d", description: "Detect CDN and hosting technology" },
+  { name: "SSL Certificate Checker", path: "/tools/ssl-checker", icon: "\ud83d\udd12", description: "Confirm SSL is valid on final destination" },
+];
+
 
 function ErrorCard({ message }: { message: string }) {
   return (
@@ -35,52 +57,29 @@ function statusColor(status: number) {
 function StepRow({ step, index, isLast }: { step: RedirectStep; index: number; isLast: boolean }) {
   const sc = statusColor(step.status);
   const isRedirect = step.status >= 300 && step.status < 400;
-
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.3 }}
-      className="relative"
-    >
+    <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.06, duration: 0.3 }} className="relative">
       <div className="flex items-start gap-4 p-5">
-        {/* Step number + connector line */}
         <div className="flex flex-col items-center gap-0 flex-shrink-0">
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-            style={{ background: sc.bg, color: sc.color, border: `1.5px solid ${sc.color}40` }}
-          >
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+            style={{ background: sc.bg, color: sc.color, border: `1.5px solid ${sc.color}40` }}>
             {index + 1}
           </div>
-          {!isLast && (
-            <div className="w-px flex-1 mt-1" style={{ background: 'var(--border)', minHeight: 24 }} />
-          )}
+          {!isLast && <div className="w-px flex-1 mt-1" style={{ background: 'var(--border)', minHeight: 24 }} />}
         </div>
-
-        {/* Content */}
         <div className="flex-1 min-w-0 pb-4">
           <div className="flex items-center gap-2 flex-wrap mb-1.5">
-            <span
-              className="text-sm font-bold mono px-2.5 py-1 rounded-lg flex-shrink-0"
-              style={{ background: sc.bg, color: sc.color }}
-            >
+            <span className="text-sm font-bold mono px-2.5 py-1 rounded-lg flex-shrink-0" style={{ background: sc.bg, color: sc.color }}>
               {step.status || '—'}
             </span>
-            <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
-              {step.statusText}
-            </span>
-            {isLast && (
-              <span className="badge badge-green text-xs">Final URL</span>
-            )}
-            {isRedirect && !isLast && (
-              <span className="badge badge-blue text-xs">Redirect</span>
-            )}
+            <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{step.statusText}</span>
+            {isLast && <span className="badge badge-green text-xs">Final URL</span>}
+            {isRedirect && !isLast && <span className="badge badge-blue text-xs">Redirect</span>}
           </div>
           <p className="text-sm mono break-all" style={{ color: '#60A5FA' }}>{step.url}</p>
         </div>
       </div>
-
-      {/* Down arrow between steps */}
       {!isLast && (
         <div className="absolute left-9 -translate-x-1/2" style={{ top: 'calc(2rem + 8px)' }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)' }}>
@@ -91,6 +90,7 @@ function StepRow({ step, index, isLast }: { step: RedirectStep; index: number; i
     </motion.div>
   );
 }
+
 
 export default function RedirectCheckerPage() {
   const [url, setUrl] = useState('');
@@ -203,6 +203,7 @@ export default function RedirectCheckerPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      <ToolInfo sections={REDIR_SECTIONS} faqs={REDIR_FAQS} relatedTools={REDIR_RELATED} />
     </ToolPageLayout>
   );
 }

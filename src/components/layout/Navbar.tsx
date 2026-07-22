@@ -7,10 +7,10 @@ import { LogoWordmark } from '../ui/Logo';
 import SearchModal from './SearchModal';
 
 const NAV_LINKS = [
-  { label: 'Tools', path: '/tools' },
+  { label: 'Tools',      path: '/tools' },
   { label: 'Categories', path: '/categories' },
-  { label: 'About', path: '/about' },
-  { label: 'Contact', path: '/contact' },
+  { label: 'About',      path: '/about' },
+  { label: 'Contact',    path: '/contact' },
 ];
 
 function SunIcon() {

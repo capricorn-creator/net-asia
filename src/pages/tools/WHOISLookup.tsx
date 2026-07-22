@@ -4,6 +4,28 @@ import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { ResultField, ResultGrid, CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
 import { useWHOISLookup } from '../../hooks/useWHOISLookup';
+import ToolInfo from '../../components/tools/ToolInfo';
+
+const WHOIS_SECTIONS = [
+  { heading: "What this tool does", content: "The WHOIS Lookup tool retrieves domain registration data including the registrar, registration and expiry dates, nameservers, registrant country, and domain status. Results are shown in a structured view with a raw data toggle." },
+  { heading: "How it works", content: "This tool uses the RDAP (Registration Data Access Protocol), the modern replacement for the older WHOIS protocol. Queries are sent from your browser to rdap.org, which routes the request to the appropriate registry's authoritative RDAP server and returns structured JSON data." },
+  { heading: "When to use it", content: "Use WHOIS Lookup to check domain ownership before a business transaction, verify expiry dates to prevent accidental lapses, identify the registrar for a domain transfer, confirm nameserver configuration, or investigate suspicious domains as part of security research." },
+  { heading: "Limitations", content: "Due to GDPR and registrar privacy policies, many registrant details \u2014 particularly email addresses and phone numbers \u2014 are redacted. This is normal for most consumer domains. Business and government domains often display more complete information." },
+];
+
+const WHOIS_FAQS = [
+  { q: "Why is registrant information redacted?", a: "GDPR and similar privacy regulations require registrars to anonymise personal data in WHOIS records. Contact details for natural persons are typically hidden. Registrars offer WHOIS privacy services that replace personal data with proxy contact information." },
+  { q: "What does \"clientTransferProhibited\" status mean?", a: "This status prevents the domain from being transferred to another registrar without the owner's explicit approval. It is a common security measure. Other statuses like \"clientDeleteProhibited\" prevent accidental deletion." },
+  { q: "What is RDAP?", a: "RDAP (Registration Data Access Protocol) is the modern successor to the original WHOIS protocol. It returns structured data in JSON format, supports internationalised domain names, and provides better access control for privacy-protected data." },
+  { q: "How do I see full registrant contact details?", a: "For most consumer domains, personal data is legitimately redacted. You may be able to obtain contact information by submitting an abuse or legal inquiry to the registrar directly." },
+];
+
+const WHOIS_RELATED = [
+  { name: "DNS Lookup", path: "/tools/dns-lookup", icon: "\ud83d\udd0d", description: "Query A, MX, TXT and other DNS records" },
+  { name: "SSL Certificate Checker", path: "/tools/ssl-checker", icon: "\ud83d\udd12", description: "Verify SSL certificate validity and expiry" },
+  { name: "DNS Propagation Checker", path: "/tools/dns-propagation", icon: "\ud83d\udce1", description: "Check propagation across global resolvers" },
+];
+
 
 function formatDate(dateStr: string | undefined) {
   if (!dateStr) return undefined;
@@ -184,6 +206,7 @@ export default function WHOISLookupPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      <ToolInfo sections={WHOIS_SECTIONS} faqs={WHOIS_FAQS} relatedTools={WHOIS_RELATED} />
     </ToolPageLayout>
   );
 }

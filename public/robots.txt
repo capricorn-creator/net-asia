@@ -1,3 +1,9 @@
 User-agent: *
 Allow: /
+
+# Block dev/utility paths that shouldn't be indexed
+Disallow: /favorites
+Disallow: /changelog
+Disallow: /roadmap
+
 Sitemap: https://netasia.dev/sitemap.xml

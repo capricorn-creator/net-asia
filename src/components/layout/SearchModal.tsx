@@ -166,7 +166,6 @@ export default function SearchModal({ open, onClose }: Props) {
                               {highlight(tool.name, query)}
                             </span>
                             {tool.isNew && <span className="badge badge-cyan">New</span>}
-                            {tool.comingSoon && <span className="badge badge-purple">Soon</span>}
                           </div>
                           <p className="text-xs truncate mt-0.5" style={{ color: 'var(--text-muted)' }}>
                             {highlight(tool.description, query)}

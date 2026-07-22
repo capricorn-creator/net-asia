@@ -9,33 +9,36 @@ import ToastContainer from './components/ui/Toast';
 import BackToTop from './components/ui/BackToTop';
 import ScrollProgress from './components/ui/ScrollProgress';
 
-// Eagerly loaded (above the fold)
+// Eagerly loaded
 import HomePage from './pages/Home';
 
-// Lazily loaded pages
+// Core pages
 const ToolsPage      = lazy(() => import('./pages/Tools'));
 const CategoriesPage = lazy(() => import('./pages/Categories'));
 const CategoryPage   = lazy(() => import('./pages/Category'));
 const AboutPage      = lazy(() => import('./pages/About'));
 const ContactPage    = lazy(() => import('./pages/Contact'));
-const RoadmapPage    = lazy(() => import('./pages/Roadmap'));
 const FavoritesPage  = lazy(() => import('./pages/Favorites'));
-const ChangelogPage  = lazy(() => import('./pages/Changelog'));
 const NotFoundPage   = lazy(() => import('./pages/NotFound'));
-const ComingSoonPage = lazy(() => import('./pages/ComingSoon'));
 
-// Tool pages
+// Legal pages
+const PrivacyPage    = lazy(() => import('./pages/Privacy'));
+const TermsPage      = lazy(() => import('./pages/Terms'));
+const DisclaimerPage = lazy(() => import('./pages/Disclaimer'));
+
+// Live tool pages — Phase 1
 const IPLookupPage    = lazy(() => import('./pages/tools/IPLookup'));
 const DNSLookupPage   = lazy(() => import('./pages/tools/DNSLookup'));
 const WHOISLookupPage = lazy(() => import('./pages/tools/WHOISLookup'));
 const SSLCheckerPage  = lazy(() => import('./pages/tools/SSLChecker'));
 const HTTPHeadersPage = lazy(() => import('./pages/tools/HTTPHeaders'));
-// Phase 2B tool pages
-const WebTechPage          = lazy(() => import('./pages/tools/WebTech'));
-const GeoIPPage            = lazy(() => import('./pages/tools/GeoIP'));
-const ReverseDNSPage       = lazy(() => import('./pages/tools/ReverseDNS'));
-const DNSPropagationPage   = lazy(() => import('./pages/tools/DNSPropagation'));
-const RedirectCheckerPage  = lazy(() => import('./pages/tools/RedirectChecker'));
+
+// Live tool pages — Phase 2B
+const WebTechPage         = lazy(() => import('./pages/tools/WebTech'));
+const GeoIPPage           = lazy(() => import('./pages/tools/GeoIP'));
+const ReverseDNSPage      = lazy(() => import('./pages/tools/ReverseDNS'));
+const DNSPropagationPage  = lazy(() => import('./pages/tools/DNSPropagation'));
+const RedirectCheckerPage = lazy(() => import('./pages/tools/RedirectChecker'));
 
 function PageLoader() {
   return (
@@ -51,7 +54,8 @@ function PageLoader() {
               <circle cx="16" cy="16" r="2" fill="white"/>
             </svg>
           </div>
-          <div className="absolute inset-0 rounded-2xl animate-ping opacity-20" style={{ background: 'linear-gradient(135deg, #3B82F6, #06B6D4)' }} />
+          <div className="absolute inset-0 rounded-2xl animate-ping opacity-20"
+            style={{ background: 'linear-gradient(135deg, #3B82F6, #06B6D4)' }} />
         </div>
         <div className="flex gap-1.5">
           {[0, 1, 2].map(i => (
@@ -78,48 +82,52 @@ function AnimatedRoutes() {
       >
         <Suspense fallback={<PageLoader />}>
           <Routes location={location}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/tools" element={<ToolsPage />} />
-            <Route path="/categories" element={<CategoriesPage />} />
+            {/* Core */}
+            <Route path="/"              element={<HomePage />} />
+            <Route path="/tools"         element={<ToolsPage />} />
+            <Route path="/categories"    element={<CategoriesPage />} />
             <Route path="/categories/:id" element={<CategoryPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/roadmap" element={<RoadmapPage />} />
-            <Route path="/favorites" element={<FavoritesPage />} />
-            <Route path="/changelog" element={<ChangelogPage />} />
+            <Route path="/about"         element={<AboutPage />} />
+            <Route path="/contact"       element={<ContactPage />} />
+            <Route path="/favorites"     element={<FavoritesPage />} />
 
-            {/* Live tools — Phase 1 */}
-            <Route path="/tools/ip-lookup"    element={<IPLookupPage />} />
-            <Route path="/tools/dns-lookup"   element={<DNSLookupPage />} />
-            <Route path="/tools/whois-lookup" element={<WHOISLookupPage />} />
-            <Route path="/tools/ssl-checker"  element={<SSLCheckerPage />} />
-            <Route path="/tools/http-headers" element={<HTTPHeadersPage />} />
+            {/* Legal */}
+            <Route path="/privacy"    element={<PrivacyPage />} />
+            <Route path="/terms"      element={<TermsPage />} />
+            <Route path="/disclaimer" element={<DisclaimerPage />} />
 
-            {/* Live tools — Phase 2B */}
+            {/* Live tools */}
+            <Route path="/tools/ip-lookup"        element={<IPLookupPage />} />
+            <Route path="/tools/dns-lookup"       element={<DNSLookupPage />} />
+            <Route path="/tools/whois-lookup"     element={<WHOISLookupPage />} />
+            <Route path="/tools/ssl-checker"      element={<SSLCheckerPage />} />
+            <Route path="/tools/http-headers"     element={<HTTPHeadersPage />} />
             <Route path="/tools/website-tech"     element={<WebTechPage />} />
             <Route path="/tools/geoip-lookup"     element={<GeoIPPage />} />
             <Route path="/tools/reverse-dns"      element={<ReverseDNSPage />} />
             <Route path="/tools/dns-propagation"  element={<DNSPropagationPage />} />
             <Route path="/tools/redirect-checker" element={<RedirectCheckerPage />} />
 
-            {/* Coming soon tools */}
-            <Route path="/tools/password-generator" element={<ComingSoonPage />} />
-            <Route path="/tools/hash-generator"     element={<ComingSoonPage />} />
-            <Route path="/tools/qr-generator"       element={<ComingSoonPage />} />
-            <Route path="/tools/uuid-generator"     element={<ComingSoonPage />} />
-            <Route path="/tools/base64"             element={<ComingSoonPage />} />
-            <Route path="/tools/url-encoder"        element={<ComingSoonPage />} />
-            <Route path="/tools/json-formatter"     element={<ComingSoonPage />} />
-            <Route path="/tools/timestamp"          element={<ComingSoonPage />} />
-            <Route path="/tools/robots-viewer"      element={<ComingSoonPage />} />
-            <Route path="/tools/sitemap-viewer"     element={<ComingSoonPage />} />
-            <Route path="/tools/http-status"        element={<ComingSoonPage />} />
-            <Route path="/tools/port-scanner"       element={<ComingSoonPage />} />
-            <Route path="/tools/ping"               element={<ComingSoonPage />} />
+            {/* Hidden tools — redirect to 404 rather than showing "coming soon" */}
+            <Route path="/tools/password-generator" element={<NotFoundPage />} />
+            <Route path="/tools/hash-generator"     element={<NotFoundPage />} />
+            <Route path="/tools/qr-generator"       element={<NotFoundPage />} />
+            <Route path="/tools/uuid-generator"     element={<NotFoundPage />} />
+            <Route path="/tools/base64"             element={<NotFoundPage />} />
+            <Route path="/tools/url-encoder"        element={<NotFoundPage />} />
+            <Route path="/tools/json-formatter"     element={<NotFoundPage />} />
+            <Route path="/tools/timestamp"          element={<NotFoundPage />} />
+            <Route path="/tools/robots-viewer"      element={<NotFoundPage />} />
+            <Route path="/tools/sitemap-viewer"     element={<NotFoundPage />} />
+            <Route path="/tools/http-status"        element={<NotFoundPage />} />
+            <Route path="/tools/port-scanner"       element={<NotFoundPage />} />
+            <Route path="/tools/ping"               element={<NotFoundPage />} />
 
-            <Route path="/privacy" element={<Navigate to="/about" replace />} />
-            <Route path="/terms"   element={<Navigate to="/about" replace />} />
-            <Route path="*"        element={<NotFoundPage />} />
+            {/* Old routes that used to exist */}
+            <Route path="/roadmap"   element={<Navigate to="/about" replace />} />
+            <Route path="/changelog" element={<Navigate to="/about" replace />} />
+
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </motion.div>

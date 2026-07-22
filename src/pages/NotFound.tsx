@@ -30,7 +30,7 @@ export default function NotFoundPage() {
           Page not found
         </h1>
         <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          This page doesn't exist. Maybe the URL changed, or perhaps the tool you're looking for is coming in a future phase.
+          This page doesn't exist or may have moved. Use the search or browse all available tools below.
         </p>
 
         {/* Quick links */}

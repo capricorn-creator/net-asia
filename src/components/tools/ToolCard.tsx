@@ -45,8 +45,6 @@ export default function ToolCard({ tool, index = 0, size = 'md' }: Props) {
         {/* Badges */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5">
           {tool.isNew && <span className="badge badge-cyan">New</span>}
-          {tool.isPopular && !tool.isNew && <span className="badge badge-blue">Popular</span>}
-          {tool.comingSoon && <span className="badge badge-purple">Soon</span>}
         </div>
 
         {/* Favorite btn */}
@@ -87,13 +85,11 @@ export default function ToolCard({ tool, index = 0, size = 'md' }: Props) {
         </div>
 
         {/* CTA */}
-        <div className="flex items-center gap-1 text-xs" style={{ color: tool.comingSoon ? 'var(--text-muted)' : s.text }}>
-          <span>{tool.comingSoon ? 'Coming soon' : 'Open tool'}</span>
-          {!tool.comingSoon && (
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
-              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-            </svg>
-          )}
+        <div className="flex items-center gap-1 text-xs" style={{ color: s.text }}>
+          <span>Open tool</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
+            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+          </svg>
         </div>
       </Link>
     </motion.div>

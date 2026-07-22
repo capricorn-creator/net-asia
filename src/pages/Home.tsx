@@ -8,19 +8,49 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import ToolCard from '../components/tools/ToolCard';
 
 const STATS = [
-  { value: '20+', label: 'Tools Available', icon: '🧰', color: '#60A5FA' },
+  { value: '10', label: 'Free Tools', icon: '🧰', color: '#60A5FA' },
   { value: '100%', label: 'Client-Side', icon: '⚡', color: '#FBBF24' },
-  { value: '0ms', label: 'Setup Required', icon: '🚀', color: '#4ADE80' },
-  { value: 'Free', label: 'Always & Forever', icon: '💎', color: '#A78BFA' },
+  { value: '0', label: 'Account Required', icon: '🚀', color: '#4ADE80' },
+  { value: 'Free', label: 'Always', icon: '💎', color: '#A78BFA' },
 ];
 
 const WHY_ITEMS = [
-  { icon: '⚡', title: 'Blazing Fast', description: 'Everything runs client-side. No servers, no cold starts. Results in milliseconds.', color: '#FBBF24' },
-  { icon: '🔒', title: 'Privacy First', description: 'Your queries stay in your browser. We never log, store, or sell your data.', color: '#4ADE80' },
-  { icon: '🌐', title: 'Always Available', description: "Deployed on Cloudflare's global edge. 99.99% uptime, zero maintenance.", color: '#60A5FA' },
-  { icon: '🧰', title: '100+ Tools Planned', description: 'Phase 1 is just the start. New tools ship every sprint on a public roadmap.', color: '#A78BFA' },
-  { icon: '📱', title: 'Works Everywhere', description: 'Fully responsive and tested on phones, tablets, and wide screens.', color: '#22D3EE' },
-  { icon: '🆓', title: 'Completely Free', description: 'No accounts, no API keys, no rate limits, no paywalls. Ever.', color: '#F472B6' },
+  {
+    icon: '⚡',
+    title: 'Instant Results',
+    description: 'Tools run directly in your browser with no server roundtrips. Most queries return in under a second.',
+    color: '#FBBF24',
+  },
+  {
+    icon: '🔒',
+    title: 'Private by Design',
+    description: 'Your queries never leave your browser. No analytics on lookups, no query logs, no data collection.',
+    color: '#4ADE80',
+  },
+  {
+    icon: '🌐',
+    title: 'Globally Reliable',
+    description: "Served from Cloudflare's global edge network. Fast load times from anywhere in the world.",
+    color: '#60A5FA',
+  },
+  {
+    icon: '🧰',
+    title: 'Growing Toolkit',
+    description: 'Ten tools today — network, DNS, domain, SSL, and website analysis. New utilities added regularly.',
+    color: '#A78BFA',
+  },
+  {
+    icon: '📱',
+    title: 'Works Everywhere',
+    description: 'Fully responsive across phones, tablets, and desktops. Dark and light themes supported.',
+    color: '#22D3EE',
+  },
+  {
+    icon: '🆓',
+    title: 'No Cost, No Catch',
+    description: 'No accounts, no API keys, no rate limits, no paywalls. Open to everyone.',
+    color: '#F472B6',
+  },
 ];
 
 function GlowOrb({ color, style }: { color: string; style: React.CSSProperties }) {
@@ -57,10 +87,14 @@ function StatCard({ stat, index }: { stat: typeof STATS[0]; index: number }) {
   );
 }
 
+// Live categories that have at least one tool
+const LIVE_CATEGORY_IDS = [...new Set(TOOLS.map(t => t.category))];
+const liveCategories = CATEGORIES.filter(c => LIVE_CATEGORY_IDS.includes(c.id));
+
 export default function HomePage() {
   usePageMeta({
     title: 'NetAsia — Internet Intelligence Platform',
-    description: 'Professional network and web tools for developers, sysadmins, and security teams. IP Lookup, DNS, WHOIS, SSL Checker and more.',
+    description: 'Free professional network and web tools for developers, sysadmins, and security teams. IP Lookup, DNS, WHOIS, SSL Checker, GeoIP and more — no signup required.',
   });
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,7 +105,7 @@ export default function HomePage() {
 
   const recentToolObjects = recent.map(id => getToolById(id)).filter(Boolean) as typeof TOOLS;
   const favoriteToolObjects = favorites.map(id => getToolById(id)).filter(Boolean) as typeof TOOLS;
-  const trendingTools = TOOLS.filter(t => !t.comingSoon).slice(0, 3);
+  const trendingTools = TOOLS.slice(5, 8); // surface newer tools
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,10 +118,9 @@ export default function HomePage() {
       {/* ── Hero ── */}
       <section className="relative pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <GlowOrb color="rgba(59,130,246,0.6)" style={{ top: '-10%', left: '20%', width: 700, height: 500 }} />
-          <GlowOrb color="rgba(139,92,246,0.5)" style={{ top: '10%', left: '5%', width: 400, height: 300 }} />
-          <GlowOrb color="rgba(6,182,212,0.5)"  style={{ top: '15%', right: '5%', width: 400, height: 300 }} />
-          {/* Grid overlay */}
+          <GlowOrb color="rgba(59,130,246,0.6)"   style={{ top: '-10%', left: '20%',  width: 700, height: 500 }} />
+          <GlowOrb color="rgba(139,92,246,0.5)"   style={{ top: '10%',  left: '5%',   width: 400, height: 300 }} />
+          <GlowOrb color="rgba(6,182,212,0.5)"    style={{ top: '15%',  right: '5%',  width: 400, height: 300 }} />
           <div className="absolute inset-0 opacity-[0.03]"
             style={{ backgroundImage: 'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         </div>
@@ -98,7 +131,6 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -110,22 +142,25 @@ export default function HomePage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-60" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400" />
               </span>
-              Phase 1.5 · 5 tools live · 15+ coming soon
+              10 free tools — no signup required
             </motion.div>
 
-            {/* Headline */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight mb-6 text-balance"
-              style={{ lineHeight: 1.08, letterSpacing: '-0.03em' }}>
+            <h1
+              className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight mb-6 text-balance"
+              style={{ lineHeight: 1.08, letterSpacing: '-0.03em' }}
+            >
               <span style={{ color: 'var(--text-primary)' }}>Internet</span>{' '}
               <span className="gradient-text">Intelligence</span>
               <br />
               <span style={{ color: 'var(--text-primary)' }}>Platform</span>
             </h1>
 
-            <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed text-balance"
-              style={{ color: 'var(--text-secondary)' }}>
-              Professional network and web tools for developers, sysadmins, and security teams.
-              Fast, private, and free — forever.
+            <p
+              className="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed text-balance"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              Professional network diagnostics, DNS analysis, SSL verification, and web inspection tools.
+              Built for developers, sysadmins, and security teams — free, fast, and private.
             </p>
 
             {/* Search bar */}
@@ -142,7 +177,7 @@ export default function HomePage() {
                   <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                 </svg>
                 <input
-                  type="text"
+                  type="search"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Search tools — IP, DNS, WHOIS, SSL..."
@@ -158,12 +193,13 @@ export default function HomePage() {
 
             {/* Quick links */}
             <div className="flex items-center justify-center gap-2 flex-wrap">
-              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Try:</span>
+              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Popular:</span>
               {[
                 { label: 'IP Lookup', path: '/tools/ip-lookup' },
                 { label: 'DNS Lookup', path: '/tools/dns-lookup' },
                 { label: 'WHOIS', path: '/tools/whois-lookup' },
                 { label: 'SSL Check', path: '/tools/ssl-checker' },
+                { label: 'GeoIP', path: '/tools/geoip-lookup' },
               ].map(link => (
                 <Link key={link.label} to={link.path}
                   className="text-sm px-3 py-1.5 rounded-lg transition-all hover:text-blue-400 hover:border-blue-500/30"
@@ -185,7 +221,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Recently Used (conditional) ── */}
+      {/* ── Recently Used ── */}
       {recentToolObjects.length > 0 && (
         <section className="py-14">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -204,7 +240,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── Favorites (conditional) ── */}
+      {/* ── Favorites ── */}
       {favoriteToolObjects.length > 0 && (
         <section className="py-14" style={{ background: 'rgba(239,68,68,0.02)', borderTop: '1px solid rgba(239,68,68,0.06)' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -231,7 +267,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <div className="section-label">🔥 Popular Tools</div>
+              <div className="section-label">🔥 Most Used</div>
               <h2 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Start with the essentials</h2>
               <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>The most-used tools in our network toolkit</p>
             </div>
@@ -253,11 +289,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="section-label" style={{ display: 'inline-flex' }}>📂 Categories</div>
-            <h2 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Organized by purpose</h2>
+            <h2 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Browse by category</h2>
             <p style={{ color: 'var(--text-secondary)' }}>Find the right tool for every job</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {CATEGORIES.map((cat, i) => (
+            {liveCategories.map((cat, i) => (
               <motion.div
                 key={cat.id}
                 initial={{ opacity: 0, scale: 0.96 }}
@@ -281,13 +317,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Trending ── */}
+      {/* ── More Tools ── */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <div className="section-label">📈 Trending</div>
-              <h2 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>What's hot right now</h2>
+              <div className="section-label">🛠️ More Tools</div>
+              <h2 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Explore the full toolkit</h2>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -322,8 +358,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="section-label" style={{ display: 'inline-flex' }}>✨ Why NetAsia</div>
-            <h2 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Built different</h2>
-            <p style={{ color: 'var(--text-secondary)' }}>We obsess over quality so you can focus on your work</p>
+            <h2 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Built for professionals</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>Reliable tools that stay out of your way</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {WHY_ITEMS.map((item, i) => (
@@ -356,7 +392,6 @@ export default function HomePage() {
             className="card relative overflow-hidden p-12"
             style={{ borderColor: 'rgba(59,130,246,0.2)' }}
           >
-            {/* Background glow */}
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 rounded-full"
                 style={{ background: 'radial-gradient(ellipse, rgba(59,130,246,0.3), transparent)', filter: 'blur(40px)' }} />
@@ -364,10 +399,10 @@ export default function HomePage() {
             <div className="relative">
               <div className="text-5xl mb-5">🚀</div>
               <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
-                Ready to explore?
+                Ready to get started?
               </h2>
               <p className="mb-8 text-lg" style={{ color: 'var(--text-secondary)' }}>
-                Start with any of our 5 live tools. No signup, no limits, no cost.
+                All tools are free to use. No signup, no API keys, no limits.
               </p>
               <div className="flex items-center justify-center gap-4 flex-wrap">
                 <Link to="/tools" className="btn-primary text-sm">
