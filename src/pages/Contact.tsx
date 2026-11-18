@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { usePageMeta } from '../hooks/usePageMeta';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
@@ -121,7 +122,7 @@ export default function ContactPage() {
 
               <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
                 By submitting this form, you agree to our{' '}
-                <a href="/privacy" className="text-blue-400 hover:underline">Privacy Policy</a>.
+                <Link to="/privacy" className="text-blue-400 hover:underline">Privacy Policy</Link>.
               </p>
             </form>
           )}

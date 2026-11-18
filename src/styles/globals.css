@@ -68,7 +68,10 @@
 
   /* Base resets */
   *, *::before, *::after { box-sizing: border-box; }
-  html { @apply scroll-smooth; font-size: 16px; }
+  /* No global smooth scrolling: it fights route-change scroll resets.
+     Smooth scrolling is applied explicitly (BackToTop, in-page anchors) when motion is allowed.
+     scroll-padding keeps anchor targets clear of the fixed navbar. */
+  html { font-size: 16px; scroll-padding-top: 5rem; }
 
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -380,5 +383,16 @@
   50%       { background-position: 100% 50%; }
 }
 
+/* Route change: opacity-only fade, no movement */
+@keyframes pageFade {
+  from { opacity: 0; }
+}
+
 /* ── Page transitions ──────────────────────────────────────────── */
 .page-enter { animation: animInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.page-fade  { animation: pageFade 150ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-fade,
+  .skeleton { animation: none; }
+}

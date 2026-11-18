@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { usePageMeta } from '../hooks/usePageMeta';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
@@ -36,7 +37,7 @@ export default function TermsPage() {
                 NetAsia is a free Internet Intelligence Platform providing network diagnostics, DNS analysis, domain inspection, SSL verification, and website analysis tools. All tools are provided free of charge and require no registration.
               </p>
               <p className="leading-relaxed mt-3">
-                The Service relies on public third-party APIs to return results. NetAsia does not guarantee the accuracy, completeness, or availability of data returned by those APIs. See our <a href="/disclaimer" className="text-blue-400 hover:underline">Disclaimer</a> for details.
+                The Service relies on public third-party APIs to return results. NetAsia does not guarantee the accuracy, completeness, or availability of data returned by those APIs. See our <Link to="/disclaimer" className="text-blue-400 hover:underline">Disclaimer</Link> for details.
               </p>
             </section>
 
@@ -100,7 +101,7 @@ export default function TermsPage() {
                 To the fullest extent permitted by law, NetAsia shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of, or inability to use, the Service.
               </p>
               <p className="leading-relaxed mt-3">
-                Results from our tools should be used for informational purposes only. Do not rely solely on NetAsia for decisions that have significant security, financial, or operational consequences. See our <a href="/disclaimer" className="text-blue-400 hover:underline">Disclaimer</a>.
+                Results from our tools should be used for informational purposes only. Do not rely solely on NetAsia for decisions that have significant security, financial, or operational consequences. See our <Link to="/disclaimer" className="text-blue-400 hover:underline">Disclaimer</Link>.
               </p>
             </section>
 
@@ -128,7 +129,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Contact</h2>
               <p className="leading-relaxed">
-                If you have questions about these Terms of Use, please <a href="/contact" className="text-blue-400 hover:underline">contact us</a>.
+                If you have questions about these Terms of Use, please <Link to="/contact" className="text-blue-400 hover:underline">contact us</Link>.
               </p>
             </section>
 

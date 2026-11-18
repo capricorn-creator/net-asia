@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { searchTools, TOOLS } from '../../lib/tools-registry';
 import type { Tool } from '../../types';
@@ -37,6 +37,14 @@ export default function SearchModal({ open, onClose }: Props) {
   const { isFavorite } = useFavorites();
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // Always call the latest onClose from the route-change effect without re-running it.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
+
+  // Close whenever the route changes (link click, back/forward, anything).
+  useEffect(() => { onCloseRef.current(); }, [pathname]);
 
   const favoriteTools = TOOLS.filter(t => isFavorite(t.id));
 
@@ -56,16 +64,26 @@ export default function SearchModal({ open, onClose }: Props) {
     setSelectedIndex(0);
   }, [query]);
 
-  const handleSelect = useCallback((tool: Tool) => {
-    // Save to history
-    const name = tool.name;
+  const recordSearch = useCallback((name: string) => {
     setSearchHistory(prev => {
       const filtered = prev.filter(h => h !== name);
       return [name, ...filtered].slice(0, 8);
     });
+  }, [setSearchHistory]);
+
+  // Keyboard selection (Enter in the input) navigates programmatically.
+  const handleSelect = useCallback((tool: Tool) => {
+    recordSearch(tool.name);
     navigate(tool.path);
     onClose();
-  }, [navigate, onClose, setSearchHistory]);
+  }, [navigate, onClose, recordSearch]);
+
+  // Mouse clicks on a <Link>: let the Link navigate; modified clicks open new tabs and keep the modal.
+  const handleLinkClick = (e: React.MouseEvent, tool: Tool) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    recordSearch(tool.name);
+    onClose();
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -80,7 +98,7 @@ export default function SearchModal({ open, onClose }: Props) {
         e.preventDefault();
         setSelectedIndex(i => Math.max(i - 1, 0));
       }
-      if (e.key === 'Enter' && list[selectedIndex]) {
+      if (e.key === 'Enter' && document.activeElement === inputRef.current && list[selectedIndex]) {
         handleSelect(list[selectedIndex]);
       }
     };
@@ -127,11 +145,9 @@ export default function SearchModal({ open, onClose }: Props) {
                 className="flex-1 bg-transparent text-base outline-none"
                 style={{ color: 'var(--text-primary)', fontSize: 15 }}
                 aria-label="Search tools"
-                role="combobox"
-                aria-expanded={results.length > 0}
               />
               {query && (
-                <button onClick={() => setQuery('')} className="p-1 rounded hover:bg-white/8 transition-colors" style={{ color: 'var(--text-muted)' }}>
+                <button onClick={() => setQuery('')} className="p-1 rounded hover:bg-white/8 transition-colors" style={{ color: 'var(--text-muted)' }} aria-label="Clear search">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                   </svg>
@@ -144,17 +160,19 @@ export default function SearchModal({ open, onClose }: Props) {
 
             {/* Results */}
             {results.length > 0 && (
-              <ul className="overflow-y-auto no-scrollbar py-2" style={{ maxHeight: 380 }} role="listbox">
+              <ul className="overflow-y-auto no-scrollbar py-2" style={{ maxHeight: 380 }}>
                 {results.map((tool, i) => {
                   const color = COLOR_MAP[tool.color] || '#3B82F6';
                   const active = i === selectedIndex;
                   return (
-                    <li key={tool.id} role="option" aria-selected={active}>
-                      <button
+                    <li key={tool.id}>
+                      <Link
+                        to={tool.path}
                         className="w-full flex items-center gap-3 px-4 py-3 text-left transition-all"
                         style={{ background: active ? 'rgba(59,130,246,0.09)' : 'transparent' }}
+                        aria-current={active ? 'true' : undefined}
                         onMouseEnter={() => setSelectedIndex(i)}
-                        onClick={() => handleSelect(tool)}
+                        onClick={e => handleLinkClick(e, tool)}
                       >
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0 transition-all"
                           style={{ background: `${color}18`, border: `1px solid ${color}28` }}>
@@ -181,7 +199,7 @@ export default function SearchModal({ open, onClose }: Props) {
                             </svg>
                           )}
                         </div>
-                      </button>
+                      </Link>
                     </li>
                   );
                 })}
@@ -234,12 +252,12 @@ export default function SearchModal({ open, onClose }: Props) {
                     </p>
                     <div className="grid grid-cols-2 gap-1.5">
                       {favoriteTools.slice(0, 4).map(tool => (
-                        <button key={tool.id} onClick={() => handleSelect(tool)}
+                        <Link key={tool.id} to={tool.path} onClick={e => handleLinkClick(e, tool)}
                           className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all hover:bg-white/6"
                           style={{ border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)' }}>
                           <span className="text-base">{tool.icon}</span>
                           <span className="text-xs font-medium truncate" style={{ color: 'var(--text-secondary)' }}>{tool.name}</span>
-                        </button>
+                        </Link>
                       ))}
                     </div>
                   </div>

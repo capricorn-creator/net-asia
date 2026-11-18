@@ -1,10 +1,31 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function NotFoundPage() {
-  usePageMeta({ title: '404 — Page Not Found' });
+  usePageMeta({ title: '404 - Page Not Found' });
   const navigate = useNavigate();
+
+  // The host serves this page with HTTP 200 (single-page app), so tell search
+  // engines not to index it. Restored when the user leaves the page.
+  useEffect(() => {
+    let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    const created = !robots;
+    if (!robots) {
+      robots = document.createElement('meta');
+      robots.name = 'robots';
+      document.head.appendChild(robots);
+    }
+    const previous = robots.content;
+    robots.content = 'noindex, follow';
+
+    return () => {
+      if (!robots) return;
+      if (created) robots.remove();
+      else robots.content = previous;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">

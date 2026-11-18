@@ -23,45 +23,26 @@ export default function ToolCard({ tool, index = 0, size = 'md' }: Props) {
   const s = COLOR_MAP[tool.color] || COLOR_MAP.blue;
   const fav = isFavorite(tool.id);
 
-  const handleFav = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggle(tool.id);
-  };
+  const handleFav = () => toggle(tool.id);
 
   const isSmall = size === 'sm';
 
   return (
     <motion.div
+      className="relative group h-full"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
         to={tool.path}
-        className={`card card-hover flex flex-col gap-3 relative group ${isSmall ? 'p-4' : 'p-5'}`}
+        className={`card card-hover flex flex-col gap-3 relative ${isSmall ? 'p-4' : 'p-5'}`}
         style={{ height: '100%' }}
       >
         {/* Badges */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5">
           {tool.isNew && <span className="badge badge-cyan">New</span>}
         </div>
-
-        {/* Favorite btn */}
-        <button
-          onClick={handleFav}
-          className="absolute bottom-3 right-3 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95"
-          style={{
-            color: fav ? '#F87171' : 'var(--text-muted)',
-            background: fav ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.05)',
-            border: `1px solid ${fav ? 'rgba(239,68,68,0.2)' : 'var(--border)'}`,
-          }}
-          aria-label={fav ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill={fav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </button>
 
         {/* Icon */}
         <div
@@ -92,6 +73,24 @@ export default function ToolCard({ tool, index = 0, size = 'md' }: Props) {
           </svg>
         </div>
       </Link>
+
+      {/* Favorite button: sibling of the link, not nested inside it */}
+      <button
+        type="button"
+        onClick={handleFav}
+        className="absolute bottom-3 right-3 z-10 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all hover:scale-110 active:scale-95"
+        style={{
+          color: fav ? '#F87171' : 'var(--text-muted)',
+          background: fav ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.05)',
+          border: `1px solid ${fav ? 'rgba(239,68,68,0.2)' : 'var(--border)'}`,
+        }}
+        aria-label={fav ? `Remove ${tool.name} from favorites` : `Add ${tool.name} to favorites`}
+        aria-pressed={fav}
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill={fav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
     </motion.div>
   );
 }

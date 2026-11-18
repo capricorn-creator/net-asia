@@ -1,6 +1,8 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { usePageMeta } from '../hooks/usePageMeta';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
+import { SITE_HOST } from '../lib/site';
 
 const LAST_UPDATED = 'July 15, 2026';
 
@@ -102,7 +104,7 @@ export default function PrivacyPage() {
                 ))}
               </ul>
               <p className="leading-relaxed mt-4">
-                This data is stored entirely on your own device and is never transmitted to us. You can clear it at any time by clearing your browser's local storage or site data for netasia.dev.
+                This data is stored entirely on your own device and is never transmitted to us. You can clear it at any time by clearing your browser's local storage or site data for {SITE_HOST}.
               </p>
             </section>
 
@@ -137,7 +139,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Contact</h2>
               <p className="leading-relaxed">
-                If you have any questions about this Privacy Policy, please <a href="/contact" className="text-blue-400 hover:underline">contact us</a>.
+                If you have any questions about this Privacy Policy, please <Link to="/contact" className="text-blue-400 hover:underline">contact us</Link>.
               </p>
             </section>
 

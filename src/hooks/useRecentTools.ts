@@ -10,6 +10,7 @@ export function useRecentTools() {
   const addRecent = useCallback(
     (id: string) => {
       setRecent(prev => {
+        if (prev[0] === id) return prev; // already the most recent: no update
         const filtered = prev.filter(r => r !== id);
         return [id, ...filtered].slice(0, MAX_RECENT);
       });

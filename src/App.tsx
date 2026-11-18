@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './hooks/useTheme';
 import { useToast } from './hooks/useToast';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import ScrollManager from './components/layout/ScrollManager';
 import ToastContainer from './components/ui/Toast';
 import BackToTop from './components/ui/BackToTop';
 import ScrollProgress from './components/ui/ScrollProgress';
@@ -42,96 +43,66 @@ const RedirectCheckerPage = lazy(() => import('./pages/tools/RedirectChecker'));
 
 function PageLoader() {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-5">
-        <div className="relative">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #3B82F6, #06B6D4)' }}>
-            <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="8" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" fill="none"/>
-              <line x1="16" y1="8" x2="16" y2="24" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"/>
-              <path d="M8 16 Q16 19.5 24 16" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" fill="none"/>
-              <circle cx="16" cy="16" r="2" fill="white"/>
-            </svg>
-          </div>
-          <div className="absolute inset-0 rounded-2xl animate-ping opacity-20"
-            style={{ background: 'linear-gradient(135deg, #3B82F6, #06B6D4)' }} />
-        </div>
-        <div className="flex gap-1.5">
-          {[0, 1, 2].map(i => (
-            <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-400"
-              style={{ animation: `bounce 1s ${i * 0.15}s infinite` }} />
-          ))}
-        </div>
+    <div
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20"
+      role="status"
+      aria-busy="true"
+    >
+      <span className="sr-only">Loading page…</span>
+      <div className="skeleton h-4 w-40 mb-8" />
+      <div className="skeleton h-10 w-2/3 max-w-md mb-4" />
+      <div className="skeleton h-4 w-full max-w-xl mb-10" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[0, 1, 2].map(i => (
+          <div key={i} className="skeleton h-36" />
+        ))}
       </div>
     </div>
   );
 }
 
-function AnimatedRoutes() {
-  const location = useLocation();
+function PageRoutes() {
+  const { pathname } = useLocation();
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -4 }}
-        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-        style={{ minHeight: '60vh' }}
-      >
-        <Suspense fallback={<PageLoader />}>
-          <Routes location={location}>
-            {/* Core */}
-            <Route path="/"              element={<HomePage />} />
-            <Route path="/tools"         element={<ToolsPage />} />
-            <Route path="/categories"    element={<CategoriesPage />} />
-            <Route path="/categories/:id" element={<CategoryPage />} />
-            <Route path="/about"         element={<AboutPage />} />
-            <Route path="/contact"       element={<ContactPage />} />
-            <Route path="/favorites"     element={<FavoritesPage />} />
+    // Opacity-only fade (150 ms, see globals.css). No exit animation, no translation.
+    <div key={pathname} className="page-fade" style={{ minHeight: '60vh' }}>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Core */}
+          <Route path="/"               element={<HomePage />} />
+          <Route path="/tools"          element={<ToolsPage />} />
+          <Route path="/categories"     element={<CategoriesPage />} />
+          <Route path="/categories/:id" element={<CategoryPage />} />
+          <Route path="/about"          element={<AboutPage />} />
+          <Route path="/contact"        element={<ContactPage />} />
+          <Route path="/favorites"      element={<FavoritesPage />} />
 
-            {/* Legal */}
-            <Route path="/privacy"    element={<PrivacyPage />} />
-            <Route path="/terms"      element={<TermsPage />} />
-            <Route path="/disclaimer" element={<DisclaimerPage />} />
+          {/* Legal */}
+          <Route path="/privacy"    element={<PrivacyPage />} />
+          <Route path="/terms"      element={<TermsPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
 
-            {/* Live tools */}
-            <Route path="/tools/ip-lookup"        element={<IPLookupPage />} />
-            <Route path="/tools/dns-lookup"       element={<DNSLookupPage />} />
-            <Route path="/tools/whois-lookup"     element={<WHOISLookupPage />} />
-            <Route path="/tools/ssl-checker"      element={<SSLCheckerPage />} />
-            <Route path="/tools/http-headers"     element={<HTTPHeadersPage />} />
-            <Route path="/tools/website-tech"     element={<WebTechPage />} />
-            <Route path="/tools/geoip-lookup"     element={<GeoIPPage />} />
-            <Route path="/tools/reverse-dns"      element={<ReverseDNSPage />} />
-            <Route path="/tools/dns-propagation"  element={<DNSPropagationPage />} />
-            <Route path="/tools/redirect-checker" element={<RedirectCheckerPage />} />
+          {/* Live tools */}
+          <Route path="/tools/ip-lookup"        element={<IPLookupPage />} />
+          <Route path="/tools/dns-lookup"       element={<DNSLookupPage />} />
+          <Route path="/tools/whois-lookup"     element={<WHOISLookupPage />} />
+          <Route path="/tools/ssl-checker"      element={<SSLCheckerPage />} />
+          <Route path="/tools/http-headers"     element={<HTTPHeadersPage />} />
+          <Route path="/tools/website-tech"     element={<WebTechPage />} />
+          <Route path="/tools/geoip-lookup"     element={<GeoIPPage />} />
+          <Route path="/tools/reverse-dns"      element={<ReverseDNSPage />} />
+          <Route path="/tools/dns-propagation"  element={<DNSPropagationPage />} />
+          <Route path="/tools/redirect-checker" element={<RedirectCheckerPage />} />
 
-            {/* Hidden tools — redirect to 404 rather than showing "coming soon" */}
-            <Route path="/tools/password-generator" element={<NotFoundPage />} />
-            <Route path="/tools/hash-generator"     element={<NotFoundPage />} />
-            <Route path="/tools/qr-generator"       element={<NotFoundPage />} />
-            <Route path="/tools/uuid-generator"     element={<NotFoundPage />} />
-            <Route path="/tools/base64"             element={<NotFoundPage />} />
-            <Route path="/tools/url-encoder"        element={<NotFoundPage />} />
-            <Route path="/tools/json-formatter"     element={<NotFoundPage />} />
-            <Route path="/tools/timestamp"          element={<NotFoundPage />} />
-            <Route path="/tools/robots-viewer"      element={<NotFoundPage />} />
-            <Route path="/tools/sitemap-viewer"     element={<NotFoundPage />} />
-            <Route path="/tools/http-status"        element={<NotFoundPage />} />
-            <Route path="/tools/port-scanner"       element={<NotFoundPage />} />
-            <Route path="/tools/ping"               element={<NotFoundPage />} />
+          {/* Retired pages (the host also 301s these via public/_redirects) */}
+          <Route path="/roadmap"   element={<Navigate to="/" replace />} />
+          <Route path="/changelog" element={<Navigate to="/" replace />} />
 
-            {/* Old routes that used to exist */}
-            <Route path="/roadmap"   element={<Navigate to="/about" replace />} />
-            <Route path="/changelog" element={<Navigate to="/about" replace />} />
-
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </motion.div>
-    </AnimatePresence>
+          {/* Everything else, including removed tool URLs */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
+    </div>
   );
 }
 
@@ -139,10 +110,11 @@ function AppContent() {
   const { toasts, removeToast } = useToast();
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
+      <ScrollManager />
       <ScrollProgress />
       <Navbar />
-      <main className="flex-1">
-        <AnimatedRoutes />
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
+        <PageRoutes />
       </main>
       <Footer />
       <BackToTop />
@@ -154,7 +126,9 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <MotionConfig reducedMotion="user">
+        <AppContent />
+      </MotionConfig>
     </ThemeProvider>
   );
 }
