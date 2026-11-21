@@ -1,28 +1,29 @@
-import { httpClient } from '../http/client';
-import { AppError } from '../http/errors';
-import type { IPInfo } from '../../types';
-import { parseIPResponse, type IpApiCoResponse } from './ip.parser';
+import { lookupGeo } from '../geoProviders';
+import { attachSource } from '../../lib/source-store';
+import type { GeoIPResult, IPInfo } from '../../types';
 
-const BASE_URL = 'https://ipapi.co';
+function toIPInfo(g: GeoIPResult): IPInfo {
+  return {
+    ip: g.ip,
+    city: g.city,
+    region: g.region,
+    country: g.country_code,
+    country_name: g.country_name,
+    org: g.org ?? g.isp,
+    isp: g.isp,
+    timezone: g.timezone,
+    latitude: g.latitude,
+    longitude: g.longitude,
+    asn: g.asn,
+  };
+}
 
 /**
- * Looks up geolocation, ISP, ASN, and timezone information for an IP
- * address. Passing an empty string looks up the caller's own IP.
- *
- * This is the only function the rest of the app should call for IP
- * lookups — it owns the endpoint URL and the provider-specific error
- * shape (`{ error: true, reason }`), and always returns the normalized
- * `IPInfo` model or throws a normalized `AppError`.
+ * Looks up geolocation, ISP, ASN and timezone for an IP address.
+ * An empty string looks up the caller's own public IP.
+ * Providers (ipwho.is, then ipapi.co) are tried in order; see geoProviders.ts.
  */
 export async function lookupIP(ip: string): Promise<IPInfo> {
-  const target = ip.trim();
-  const url = target ? `${BASE_URL}/${encodeURIComponent(target)}/json/` : `${BASE_URL}/json/`;
-
-  const raw = await httpClient.get<IpApiCoResponse>(url);
-
-  if (raw.error) {
-    throw new AppError(raw.reason || 'Invalid IP address.', 'INVALID_INPUT');
-  }
-
-  return parseIPResponse(raw);
+  const { data, source } = await lookupGeo(ip);
+  return attachSource(toIPInfo(data), source);
 }

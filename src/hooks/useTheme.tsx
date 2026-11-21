@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { safeStorage } from '../lib/safe-storage';
 
 type Theme = 'dark' | 'light';
 
@@ -15,25 +16,29 @@ const ThemeContext = createContext<ThemeContextType>({
   isDark: true,
 });
 
+const KEY = 'net-asia-theme';
+
+function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  root.classList.remove('light', 'dark');
+  root.classList.add(theme);
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem('net-asia-theme');
-    return (stored as Theme) || 'dark';
-  });
+  // Server and first client render both start as 'dark' so hydration matches.
+  // The inline script in index.html has already put the right class on <html>.
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'light') {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    } else {
-      root.classList.remove('light');
-      root.classList.add('dark');
-    }
-    localStorage.setItem('net-asia-theme', theme);
-  }, [theme]);
+    setTheme(document.documentElement.classList.contains('light') ? 'light' : 'dark');
+  }, []);
 
-  const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
+  const toggleTheme = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    applyTheme(next);
+    safeStorage.set(KEY, next);
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>

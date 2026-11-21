@@ -4,28 +4,7 @@ import ToolPageLayout from '../../components/tools/ToolPageLayout';
 import { ResultField, ResultGrid, CopyButton } from '../../components/tools/ResultField';
 import { SkeletonResult } from '../../components/ui/Skeleton';
 import { useIPLookup } from '../../hooks/useIPLookup';
-import ToolInfo from '../../components/tools/ToolInfo';
-
-const IP_SECTIONS = [
-  { heading: "What this tool does", content: "The IP Lookup tool retrieves geolocation and network information for any IPv4 or IPv6 address. Enter an address to see its approximate location, timezone, ISP, ASN, and coordinates. Leave the field empty to look up your own public IP address." },
-  { heading: "How it works", content: "Queries are sent directly from your browser to ipapi.co, a public geolocation API. The API maps IP addresses to physical locations using regularly updated databases from regional internet registries (RIRs) such as ARIN, RIPE NCC, and APNIC." },
-  { heading: "When to use it", content: "Use IP Lookup to verify the origin of traffic, investigate suspicious requests, confirm geolocation for debugging, or identify which organisation or ISP owns a particular IP block. It is commonly used by network engineers, security analysts, and developers working with access control rules." },
-  { heading: "Limitations", content: "Geolocation is an estimate and is not 100% accurate. Mobile devices, VPN users, and Tor exit nodes may show incorrect locations. Corporate networks and cloud providers may geolocate to a data centre rather than the actual user location. For precise location data, use device GPS." },
-];
-
-const IP_FAQS = [
-  { q: "How accurate is IP geolocation?", a: "Country-level accuracy is typically above 95%. City-level accuracy varies considerably. It can be within a few kilometres for broadband connections, but may be off by hundreds of kilometres for mobile or satellite connections." },
-  { q: "Why does my IP show the wrong city?", a: "ISPs route traffic through regional points of presence, so your IP may geolocate to your ISP's nearest data centre rather than your physical location. VPNs and proxies will show the server's location instead." },
-  { q: "What is an ASN?", a: "An Autonomous System Number (ASN) identifies a network operated by a single organisation on the internet. Large ISPs, universities, and cloud providers each have one or more ASNs assigned to them by regional internet registries." },
-  { q: "Can I look up my own IP?", a: "Yes. Leave the input field blank and click Lookup to see your own public IP address and its associated location and network details." },
-  { q: "Is IPv6 supported?", a: "Yes. Paste any valid IPv4 or IPv6 address into the input and the tool will return full geolocation and network information." },
-];
-
-const IP_RELATED = [
-  { name: "GeoIP Lookup", path: "/tools/geoip-lookup", icon: "🗺️", description: "Enhanced geolocation with country flag and map links" },
-  { name: "Reverse DNS Lookup", path: "/tools/reverse-dns", icon: "🔄", description: "Find the hostname associated with an IP address" },
-  { name: "DNS Lookup", path: "/tools/dns-lookup", icon: "🔍", description: "Query DNS records for any domain" },
-];
+import { content } from '../../content/tools/ip-lookup';
 
 export default function IPLookupPage() {
   const [input, setInput] = useState('');
@@ -46,6 +25,7 @@ export default function IPLookupPage() {
 
   return (
     <ToolPageLayout
+      content={content}
       title="IP Lookup"
       description="Get detailed geolocation, ISP, timezone, and ASN information for any IPv4 or IPv6 address."
       icon="🌐"
@@ -55,11 +35,12 @@ export default function IPLookupPage() {
     >
       {/* Input */}
       <div className="card p-6 mb-4">
-        <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-secondary)' }}>
+        <label htmlFor="ip-input" className="block text-sm font-medium mb-3" style={{ color: 'var(--text-secondary)' }}>
           IP Address
         </label>
         <div className="flex gap-3">
           <input
+            id="ip-input"
             type="text"
             className="input-field text-base"
             placeholder="e.g. 8.8.8.8 or 2001:4860:4860::8888"
@@ -85,7 +66,7 @@ export default function IPLookupPage() {
             Lookup
           </button>
         </div>
-        <div className="flex items-center gap-3 mt-3">
+        <div className="flex items-center gap-3 mt-3 flex-wrap">
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Quick lookup:</span>
           {['My IP', '8.8.8.8', '1.1.1.1', '208.67.222.222'].map(ip => (
             <button
@@ -124,6 +105,7 @@ export default function IPLookupPage() {
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="card p-5 flex items-start gap-3"
             style={{ borderColor: 'rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.05)' }}
+            role="alert"
           >
             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(239,68,68,0.1)' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -202,7 +184,6 @@ export default function IPLookupPage() {
           </motion.div>
         )}
       </AnimatePresence>
-      <ToolInfo sections={IP_SECTIONS} faqs={IP_FAQS} relatedTools={IP_RELATED} />
     </ToolPageLayout>
   );
 }

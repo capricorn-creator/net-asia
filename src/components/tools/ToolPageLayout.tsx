@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { motion } from 'framer-motion';
 
 import Breadcrumbs from '../ui/Breadcrumbs';
+import Seo from '../seo/Seo';
+import ToolContentSections from './ToolContentSections';
+import { CurrentDataSource } from './DataSource';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useRecentTools } from '../../hooks/useRecentTools';
 import { getToolById } from '../../lib/tools-registry';
-import { usePageMeta } from '../../hooks/usePageMeta';
+import { faqLd, webApplicationLd } from '../../lib/seo';
+import { formatDate } from '../../lib/format';
+import { setCurrentSource } from '../../lib/source-store';
+import type { ToolContent } from '../../content/types';
 
 interface Props {
   title: string;
@@ -15,6 +20,7 @@ interface Props {
   color: string;
   category: string;
   toolId: string;
+  content: ToolContent;
   children: ReactNode;
 }
 
@@ -77,17 +83,26 @@ function FavoriteButton({ toolId }: { toolId: string }) {
   );
 }
 
-export default function ToolPageLayout({ title, description, icon, color, category, toolId, children }: Props) {
-  usePageMeta({ title, description });
+export default function ToolPageLayout({ title, description, icon, color, category, toolId, content, children }: Props) {
   const { addRecent } = useRecentTools();
   const style = COLOR_STYLES[color] || COLOR_STYLES.blue;
   const tool = getToolById(toolId);
+  const path = tool?.path ?? `/tools/${toolId}`;
 
   // Track this tool as recently used on mount
   useEffect(() => { addRecent(toolId); }, [toolId, addRecent]);
 
+  // Forget the last data source when leaving the page
+  useEffect(() => () => setCurrentSource(null), []);
+
+  const jsonLd = [
+    webApplicationLd({ name: title, description: content.metaDescription, path }),
+    ...(content.faqs.length > 0 ? [faqLd(content.faqs)] : []),
+  ];
+
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <Seo title={content.metaTitle ?? title} description={content.metaDescription} path={path} jsonLd={jsonLd} />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}
         <div className="mb-8">
@@ -95,18 +110,10 @@ export default function ToolPageLayout({ title, description, icon, color, catego
         </div>
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10"
-        >
+        <div className="mb-10">
           <div className="flex items-start gap-5">
             {/* Icon */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
               style={{
                 background: style.bg,
@@ -115,7 +122,7 @@ export default function ToolPageLayout({ title, description, icon, color, catego
               }}
             >
               {icon}
-            </motion.div>
+            </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -137,21 +144,30 @@ export default function ToolPageLayout({ title, description, icon, color, catego
             </div>
           </div>
 
+          <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            By {content.author.name} · Last reviewed{' '}
+            <time dateTime={content.lastReviewed}>{formatDate(content.lastReviewed)}</time>
+          </p>
+
           {/* Actions */}
           <div className="flex items-center gap-2 mt-5 flex-wrap">
             <FavoriteButton toolId={toolId} />
             <ShareButton />
           </div>
-        </motion.div>
+        </div>
 
-        {/* Tool content */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {children}
-        </motion.div>
+        {/* Tool widget stays above the fold */}
+        <div>{children}</div>
+
+        {/* Which provider answered, and when */}
+        <div className="mt-4" aria-live="polite">
+          <CurrentDataSource />
+        </div>
+
+        {/* Long-form content lives below the widget */}
+        <div className="mt-12">
+          <ToolContentSections content={content} />
+        </div>
       </div>
     </div>
   );

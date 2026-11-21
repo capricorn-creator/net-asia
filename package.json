@@ -5,7 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build:client": "tsc -b && vite build",
+    "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr",
+    "prerender": "node scripts/prerender.mjs",
+    "check:seo": "node scripts/check-seo.mjs",
+    "build": "npm run build:client && npm run build:ssr && npm run prerender && npm run check:seo",
+    "migrate:tool-content": "node scripts/migrate-tool-content.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

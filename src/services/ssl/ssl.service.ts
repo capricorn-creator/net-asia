@@ -1,32 +1,34 @@
-import { httpClient } from '../http/client';
-import { AppError } from '../http/errors';
+import { ApiError } from '../../lib/errors';
+import { fetchCertificates } from '../../lib/api';
+import { cleanDomain } from '../../lib/domain';
+import { attachSource } from '../../lib/source-store';
 import type { SSLCertificate } from '../../types';
 import { parseSSLResponse, type CrtShEntry } from './ssl.parser';
 
-const BASE_URL = 'https://crt.sh';
-
-function stripToHostname(domain: string): string {
-  return domain.trim().replace(/^https?:\/\//, '').split('/')[0];
-}
+// Both sources send timestamps without a zone ("2025-01-31T00:00:00") or with Z. They are UTC.
+const utc = (s: string) => (/(Z|[+-]\d\d:?\d\d)$/.test(s) ? s : `${s}Z`);
 
 /**
- * Looks up the most recent SSL/TLS certificate for a domain via
- * certificate transparency logs (crt.sh). Returns the normalized
- * `SSLCertificate` model with validity and expiry already computed.
+ * Finds the most recent certificate logged for a domain in Certificate
+ * Transparency logs (via /api/ct). This is the latest *logged* certificate,
+ * not a live TLS handshake with the server.
  */
 export async function lookupSSL(domain: string): Promise<SSLCertificate> {
-  const cleanDomain = stripToHostname(domain);
+  const name = cleanDomain(domain);
+  const { certificates, source } = await fetchCertificates(name);
 
-  if (!cleanDomain) {
-    throw new AppError('Please enter a valid domain name.', 'INVALID_INPUT');
+  if (!certificates.length) {
+    throw new ApiError('not-found', 'No certificates were found in Certificate Transparency logs for this domain.');
   }
 
-  const url = `${BASE_URL}/?q=${encodeURIComponent(cleanDomain)}&output=json`;
-  const entries = await httpClient.get<CrtShEntry[]>(url);
+  const entries: CrtShEntry[] = certificates.map(c => ({
+    common_name: c.commonName,
+    issuer_name: c.issuer || undefined,
+    not_before: utc(c.notBefore),
+    not_after: utc(c.notAfter),
+    serial_number: c.serial || undefined,
+    name_value: c.names.join('\n'),
+  }));
 
-  if (!entries?.length) {
-    throw new AppError('No SSL certificates found for this domain.', 'NOT_FOUND');
-  }
-
-  return parseSSLResponse(entries, cleanDomain);
+  return attachSource(parseSSLResponse(entries, name), source);
 }

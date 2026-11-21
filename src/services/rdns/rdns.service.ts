@@ -1,26 +1,23 @@
-import { httpClient } from '../http/client';
-import { AppError } from '../http/errors';
+import { ApiError } from '../../lib/errors';
+import { attachSource } from '../../lib/source-store';
 import type { ReverseDNSResult } from '../../types';
-import { ipToArpa, parseReverseDNSResponse, type DoHResponse } from './rdns.parser';
+import { dohQuery } from '../doh';
+import { isIPv4, isIPv6 } from '../geoProviders';
+import { ipToArpa, parseReverseDNSResponse } from './rdns.parser';
 
-const BASE_URL = 'https://dns.google/resolve';
-
-/**
- * Performs a reverse DNS lookup (PTR record) for an IP address using
- * Google's DNS-over-HTTPS API.
- */
+/** Reverse DNS (PTR) lookup for an IPv4 or IPv6 address. */
 export async function lookupReverseDNS(ip: string): Promise<ReverseDNSResult> {
   const target = ip.trim();
-  if (!target) {
-    throw new AppError('Please enter an IP address.', 'INVALID_INPUT');
+  if (!target) throw new ApiError('invalid-input', 'Enter an IP address.');
+  const valid = isIPv4(target) || (isIPv6(target) && !target.includes('.'));
+  if (!valid) {
+    throw new ApiError('invalid-input', 'Enter a valid IPv4 or IPv6 address (IPv4-mapped IPv6 notation is not supported).');
   }
 
-  const arpa = ipToArpa(target);
-  const url = `${BASE_URL}?name=${encodeURIComponent(arpa)}&type=PTR`;
   const start = Date.now();
-
-  const raw = await httpClient.get<DoHResponse>(url);
-  const responseTime = Date.now() - start;
-
-  return parseReverseDNSResponse(raw, target, responseTime);
+  const { response, source } = await dohQuery(ipToArpa(target), 'PTR');
+  if (response.Status !== 0 && response.Status !== 3) {
+    throw new ApiError('provider', `The resolver returned DNS status ${response.Status}. Try again shortly.`);
+  }
+  return attachSource(parseReverseDNSResponse(response, target, Date.now() - start), source);
 }

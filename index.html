@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
+    <!-- Set the theme class before first paint (localStorage, then system preference) -->
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('net-asia-theme');
+          var t = s === 'light' || s === 'dark' ? s : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          var r = document.documentElement;
+          r.classList.remove('light', 'dark');
+          r.classList.add(t);
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -15,51 +28,16 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4584467834331494"
      crossorigin="anonymous"></script>
 
-    <!-- GitHub Pages SPA redirect restore (pairs with public/404.html; safe to delete on Cloudflare Pages / Netlify) -->
-    <script>
-      (function (l) {
-        if (l.search[1] === '/') {
-          var decoded = l.search.slice(1).split('&').map(function (s) {
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
-        }
-      }(window.location));
-    </script>
-
-    <!-- Primary Meta -->
-    <title>NetAsia — Internet Intelligence Platform</title>
-    <meta name="description" content="Free professional network and web tools for developers, sysadmins, and security teams. IP Lookup, GeoIP, DNS, WHOIS, SSL Checker, HTTP Headers, Tech Detector and more — no signup required." />
-    <meta name="keywords" content="IP lookup, DNS lookup, WHOIS, SSL checker, HTTP headers, GeoIP, reverse DNS, DNS propagation, website technology detector, URL redirect checker, network tools, internet tools" />
-    <meta name="author" content="NetAsia" />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
-    <link rel="canonical" href="https://net-asia.com/" />
-
-    <!-- Open Graph -->
-    <meta property="og:type"        content="website" />
-    <meta property="og:url"         content="https://net-asia.com/" />
-    <meta property="og:title"       content="NetAsia - Internet Intelligence Platform" />
-    <meta property="og:description" content="Free professional network and web tools. IP Lookup, GeoIP, DNS, WHOIS, SSL, HTTP Headers, Tech Detector and more — no signup required." />
-    <meta property="og:image"       content="https://net-asia.com/og-image.png" />
-    <meta property="og:image:width"  content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt"    content="NetAsia - Internet Intelligence Platform" />
-    <meta property="og:site_name"   content="NetAsia" />
-    <meta property="og:locale"      content="en_US" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card"        content="summary_large_image" />
-    <meta name="twitter:title"       content="NetAsia - Internet Intelligence Platform" />
-    <meta name="twitter:description" content="Free professional network and web tools. IP Lookup, GeoIP, DNS, WHOIS, SSL, HTTP Headers and more — no signup required." />
-    <meta name="twitter:image"       content="https://net-asia.com/og-image.png" />
+    <!-- Per-page title, description, canonical, Open Graph, Twitter and JSON-LD are injected here at build time -->
+    <!--seo-head-->
 
     <!-- PWA -->
-    <meta name="application-name"                  content="NetAsia" />
+    <meta name="application-name"                  content="NET Asia" />
     <meta name="theme-color"                       content="#08080F" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color"                       content="#F8FAFC" media="(prefers-color-scheme: light)" />
     <meta name="apple-mobile-web-app-capable"       content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title"         content="NetAsia" />
+    <meta name="apple-mobile-web-app-title"         content="NET Asia" />
     <meta name="mobile-web-app-capable"             content="yes" />
 
     <!-- Icons -->
@@ -70,42 +48,6 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Structured Data: WebSite -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "NetAsia",
-      "url": "https://net-asia.com",
-      "description": "Free professional network and web tools for developers, sysadmins, and security teams",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://net-asia.com/tools?q={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-
-    <!-- Structured Data: Organization -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "NetAsia",
-      "url": "https://net-asia.com",
-      "logo": "https://net-asia.com/favicon.svg",
-      "description": "Internet Intelligence Platform — free network and web tools",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer support",
-        "url": "https://net-asia.com/contact"
-      }
-    }
-    </script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->

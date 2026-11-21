@@ -9,6 +9,8 @@ import ScrollManager from './components/layout/ScrollManager';
 import ToastContainer from './components/ui/Toast';
 import BackToTop from './components/ui/BackToTop';
 import ScrollProgress from './components/ui/ScrollProgress';
+import Seo from './components/seo/Seo';
+import RouteSeoFallback from './components/seo/RouteSeoFallback';
 
 // Eagerly loaded
 import HomePage from './pages/Home';
@@ -21,6 +23,12 @@ const AboutPage      = lazy(() => import('./pages/About'));
 const ContactPage    = lazy(() => import('./pages/Contact'));
 const FavoritesPage  = lazy(() => import('./pages/Favorites'));
 const NotFoundPage   = lazy(() => import('./pages/NotFound'));
+
+// Content pages
+const GuidesPage          = lazy(() => import('./pages/Guides'));
+const GuidePage           = lazy(() => import('./pages/Guide'));
+const GlossaryPage        = lazy(() => import('./pages/Glossary'));
+const EditorialPolicyPage = lazy(() => import('./pages/EditorialPolicy'));
 
 // Legal pages
 const PrivacyPage    = lazy(() => import('./pages/Privacy'));
@@ -61,11 +69,23 @@ function PageLoader() {
   );
 }
 
+function NotFoundRoute() {
+  // <Seo> comes after the page so it wins over any usePageMeta call inside NotFound.
+  return (
+    <>
+      <NotFoundPage />
+      <Seo title="Page not found" description="This page does not exist on NET Asia." noindex />
+    </>
+  );
+}
+
 function PageRoutes() {
   const { pathname } = useLocation();
   return (
     // Opacity-only fade (150 ms, see globals.css). No exit animation, no translation.
     <div key={pathname} className="page-fade" style={{ minHeight: '60vh' }}>
+      {/* Default meta for static routes; a page's own <Seo> overrides it. */}
+      <RouteSeoFallback />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Core */}
@@ -76,6 +96,12 @@ function PageRoutes() {
           <Route path="/about"          element={<AboutPage />} />
           <Route path="/contact"        element={<ContactPage />} />
           <Route path="/favorites"      element={<FavoritesPage />} />
+
+          {/* Content */}
+          <Route path="/guides"           element={<GuidesPage />} />
+          <Route path="/guides/:slug"     element={<GuidePage />} />
+          <Route path="/glossary"         element={<GlossaryPage />} />
+          <Route path="/editorial-policy" element={<EditorialPolicyPage />} />
 
           {/* Legal */}
           <Route path="/privacy"    element={<PrivacyPage />} />
@@ -99,7 +125,7 @@ function PageRoutes() {
           <Route path="/changelog" element={<Navigate to="/" replace />} />
 
           {/* Everything else, including removed tool URLs */}
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundRoute />} />
         </Routes>
       </Suspense>
     </div>
