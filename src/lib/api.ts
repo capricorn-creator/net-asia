@@ -23,10 +23,23 @@ export async function callApi<T>(endpoint: string, params: Record<string, string
   try {
     const res = await fetch(`/api/${endpoint}?${new URLSearchParams(params)}`, { signal: ctrl.signal });
     const body = await res.json().catch(() => null);
+
     if (!res.ok) {
-      const err = body?.error as { kind?: string; message?: string } | undefined;
+      const err = (body as { error?: { kind?: string; message?: string } } | null)?.error;
       const kind = API_ERROR_KINDS.includes(err?.kind as ApiErrorKind) ? (err!.kind as ApiErrorKind) : 'provider';
-      throw new ApiError(kind, err?.message);
+      const hint = import.meta.env.DEV
+        ? ' (Local dev: run `npx wrangler pages dev dist` in a second terminal so /api works.)'
+        : '';
+      throw new ApiError(kind, err?.message ?? `The API returned HTTP ${res.status}.${hint}`);
+    }
+
+    // Every function replies with JSON that includes `source`. Anything else (for example the site's own
+    // HTML page served with status 200) means the API function is not actually running at this address.
+    if (!body || typeof body !== 'object' || !('source' in body)) {
+      throw new ApiError(
+        'provider',
+        'The server did not return a valid API response. If this is a new deployment, check that the /api functions were deployed.'
+      );
     }
     return body as WithSource<T>;
   } catch (e) {
